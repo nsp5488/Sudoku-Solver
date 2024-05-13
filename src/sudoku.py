@@ -28,8 +28,9 @@ class Sudoku:
     def play(self, i, j, value):
         if check_play(self._board, i, j, value):
             self._board[i][j] = value
+            return True
         else:
-            raise Exception("Invalid Play")
+            return False
 
 
     def get_cell(self, i, j):

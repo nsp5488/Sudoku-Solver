@@ -41,7 +41,7 @@ Utitlity method to check if a play is valid given a board, location, and value t
 """
 def check_play(board, i, j, value) -> bool:
     # Check bounds
-    if i < 0 or i >= 9 or j < 0 or j >= 9:
+    if i < 0 or i >= 9 or j < 0 or j >= 9 or value < 1 or value > 9:
         return False
 
     # Check for duplicates in row / column        

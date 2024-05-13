@@ -1,11 +1,12 @@
 from tkinter import Tk, Frame, StringVar, Entry
 
 class Window:
-    def __init__(self, width, height):
+    def __init__(self, width, height, observers = []):
         self._root = Tk()
         self._root.title = "Sudoku"
         self._board = Frame(self._root, bg='white')
         self._board.pack()
+        self._observers = observers
 
         self._running = False
         self._contents = [[None]*9 for _ in range(9)]
@@ -13,6 +14,9 @@ class Window:
         self._build_cells()
 
         self._root.protocol("WM_DELETE_WINDOW", self.close)
+
+    def add_observer(self, observer):
+        self._observers.append(observer)
 
 
     def _build_cells(self):
@@ -32,14 +36,24 @@ class Window:
                 self._cells[i][j].grid(sticky='nsew')
 
                 self._contents[i][j].trace_add("write", self._handle)
-                self._contents[i][j].trace_add("unset", self._handle)
 
                 
     def _handle(self, name, handle, op):
         indices = name.split(',')
         i, j = int(indices[0]), int(indices[1])
-        contents = self._contents[i][j].get()
-        # print(f"{op} to ({i},{j}) with value {contents}")
+        contents_str = self._contents[i][j].get().strip()
+        if contents_str.isnumeric():
+            contents = int(contents_str)
+        else:
+            self._cells[i][j].configure(foreground="red")
+            return
+        for observer in self._observers:
+            args = (i, j, contents)
+            result = observer(args)
+            if not result:
+                self._cells[i][j].configure(foreground="red")
+            else:
+                self._cells[i][j].configure(foreground="black")
 
     def draw(self, board):
         print("Drawing initial board...")
