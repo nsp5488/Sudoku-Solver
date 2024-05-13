@@ -38,6 +38,26 @@ class Sudoku:
     def get_cell(self, i, j):
         return self._board[i][j]
 
+
+    def fill_board(self):
+        i = 0
+        j = 0
+        k = 1
+        while i < 9:
+            if self._check_play(i, j, k):
+                self._board[i][j] = k
+                j += 1
+                i += int(j / 9)
+                j = j % 9
+                k = 1
+            else:
+                k += 1
+                
+                
+            
+    def _generate_game(self):
+        pass
+
     def __repr__(self):
         out = ''
 
