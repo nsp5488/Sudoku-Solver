@@ -3,7 +3,7 @@ from sudoku import Sudoku
 
 class TestSudoku(unittest.TestCase):
     def setUp(self) -> None:
-        self.puzzle = Sudoku(32, 0)
+        self.puzzle = Sudoku(32, 0, False)
 
         return super().setUp()
 

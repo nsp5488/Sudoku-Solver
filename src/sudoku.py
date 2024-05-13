@@ -1,7 +1,7 @@
 from copy import deepcopy
 import random
 class Sudoku:
-    def __init__(self, number_of_filled_cells=32, random_seed=None):
+    def __init__(self, number_of_filled_cells=32, random_seed=None, autogenerate=True):
         self._board = [[0] * 9 for _ in range(9)]
         
         self._generating_board = True
@@ -9,6 +9,8 @@ class Sudoku:
         self._number_of_filled_cells = number_of_filled_cells
         if random_seed:
             random.seed(random_seed)
+        if autogenerate:
+            self._generate_game()
 
 
     def play(self, i, j, value):
