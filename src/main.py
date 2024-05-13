@@ -1,25 +1,35 @@
 from sudoku import Sudoku
 from graphics import Window
+from sudoku_solver import SudokuSolver
 """
 TODO 
 implement UI:
-    number of errors,
     solve button w/ animated solve
 implement modular improvements to the backtracker (arc consistency, etc)
 time in = 10 hours
+resume @ 7pm
 """
 
-def control(game):
+def control(game, window):
     make_play = lambda args: game.play(*args)
-    window = Window(600, 600)
+    
     window.draw(game._board)
     window.add_observer(make_play)
+    window.set_max_errors(3)
+    window.disable_game()
+
+    game._solver.solve(game._board, 0, 0)
     window.wait_for_close()
 
 
 def main():
     print("Generating puzzle...")
-    control(Sudoku())
+    window = Window(600, 600)
+    solver = SudokuSolver(visualize=True)
+    solver.set_visualize_display(vis_update = lambda args: window.update_cell(*args))
+    game = Sudoku(solver=solver)
+    
+    control(game, window)
     # s.auto_solve()
     # window.draw(s._board)
     # for i in range(9):

@@ -11,11 +11,14 @@ class Window:
 
         self._bottom_frame = Frame(self._root, bg='white')
         self._bottom_frame.grid(row=10)
-        self.testLabel = Label(self._bottom_frame)
-        self.testLabel.config(text='abc')
-        self.testLabel.grid(row = 0, column=0)
-        self.testLabel2 = Label(self._bottom_frame, text='def')
-        self.testLabel2.grid(row=0, column=2)
+        self._error_label = Label(self._bottom_frame)
+        self._error_label.grid(row = 0, column=0)
+        self._num_errors = 0
+        self.max_errors = 3
+        self._disable_game = False
+        # self.testLabel2 = Label(self._bottom_frame, text='def')
+        # self.testLabel2.grid(row=0, column=1)
+
         self._observers = observers
 
         self._running = False
@@ -24,6 +27,10 @@ class Window:
         self._build_cells()
 
         self._root.protocol("WM_DELETE_WINDOW", self.close)
+
+    def set_max_errors(self, max_errors):
+        self.max_errors = max_errors
+        self._error_label.configure(text=f"Errors: {self._num_errors}/{self.max_errors}")
 
     def add_observer(self, observer):
         self._observers.append(observer)
@@ -42,13 +49,18 @@ class Window:
                 cell = Frame(frames[i//3][j//3])
                 cell.grid(row=i%3, column=j%3, sticky='nsew')
                 self._contents[i][j] = StringVar(name=f'{i},{j}')
-                self._cells[i][j] = Entry(cell, bg='white', width=3, textvariable=self._contents[i][j], justify='center', foreground='black')
+                self._cells[i][j] = Entry(cell, bg='white', width=3, textvariable=self._contents[i][j], 
+                                          justify='center', foreground='black', )
                 self._cells[i][j].grid(sticky='nsew')
 
                 self._contents[i][j].trace_add("write", self._handle)
 
+    def disable_game(self):
+        self._disable_game = True
                 
     def _handle(self, name, handle, op):
+        if self._disable_game:
+            return
         indices = name.split(',')
         i, j = int(indices[0]), int(indices[1])
         contents_str = self._contents[i][j].get().strip()
@@ -63,11 +75,19 @@ class Window:
                 result = observer(args)
                 if not result:
                     self._cells[i][j].configure(foreground="red")
+                    self._num_errors += 1
+                    self._error_label.config(text=f"Errors: {self._num_errors}/{self.max_errors}")
                 else:
                     self._cells[i][j].configure(foreground="black")
             except Exception as e:
-                print(e)
-                self.testLabel.configure(text=str(e))
+                self._error_label.configure(text=str(e))
+                self._gameover()
+    
+    def _gameover(self):
+        for i in range(9):
+            for j in range(9):
+                self._cells[i][j].config(state="disabled")
+
     def draw(self, board):
         print("Drawing initial board...")
         for i in range(9):

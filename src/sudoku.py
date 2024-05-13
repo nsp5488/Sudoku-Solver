@@ -7,7 +7,7 @@ class Sudoku:
         self._error_count = 0
         self._generating_board = True
         self._num_solutions = 0
-        self._solver = SudokuSolver(False)
+        self._solver = solver
         self._max_errors = max_errors
         if autogenerate:
             if generator:
