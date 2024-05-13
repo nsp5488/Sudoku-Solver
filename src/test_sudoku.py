@@ -3,7 +3,7 @@ from sudoku import Sudoku
 
 class TestSudoku(unittest.TestCase):
     def setUp(self) -> None:
-        self.puzzle = Sudoku(0)
+        self.puzzle = Sudoku(32, 0)
 
         return super().setUp()
 
@@ -37,5 +37,7 @@ class TestSudoku(unittest.TestCase):
         for i in range(9):
             for j in range(9):
                 value = self.puzzle._board[i][j] # Cache the true value
-                self.puzzle._board[i][j] = 0 # Reset the value
-                self.assertTrue(self.puzzle._check_play(i, j, value)) # Assert that that value results in a valid board
+                if value != 0:
+                    self.puzzle._board[i][j] = 0 # Reset the value
+                    self.assertTrue(self.puzzle._check_play(i, j, value)) # Assert that that value results in a valid board
+        self.assertTrue(self.puzzle._fill_board(0,0))
