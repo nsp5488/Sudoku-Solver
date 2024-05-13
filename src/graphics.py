@@ -1,11 +1,21 @@
-from tkinter import Tk, Frame, StringVar, Entry
+from tkinter import Tk, Frame, StringVar, Entry, Label
 
 class Window:
     def __init__(self, width, height, observers = []):
         self._root = Tk()
         self._root.title = "Sudoku"
+
         self._board = Frame(self._root, bg='white')
-        self._board.pack()
+        self._board.grid(row=0, rowspan=9)
+        # self._board.pack()
+
+        self._bottom_frame = Frame(self._root, bg='white')
+        self._bottom_frame.grid(row=10)
+        self.testLabel = Label(self._bottom_frame)
+        self.testLabel.config(text='abc')
+        self.testLabel.grid(row = 0, column=0)
+        self.testLabel2 = Label(self._bottom_frame, text='def')
+        self.testLabel2.grid(row=0, column=2)
         self._observers = observers
 
         self._running = False
@@ -49,12 +59,15 @@ class Window:
             return
         for observer in self._observers:
             args = (i, j, contents)
-            result = observer(args)
-            if not result:
-                self._cells[i][j].configure(foreground="red")
-            else:
-                self._cells[i][j].configure(foreground="black")
-
+            try:
+                result = observer(args)
+                if not result:
+                    self._cells[i][j].configure(foreground="red")
+                else:
+                    self._cells[i][j].configure(foreground="black")
+            except Exception as e:
+                print(e)
+                self.testLabel.configure(text=str(e))
     def draw(self, board):
         print("Drawing initial board...")
         for i in range(9):

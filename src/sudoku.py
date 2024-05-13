@@ -8,7 +8,7 @@ class Sudoku:
         self._generating_board = True
         self._num_solutions = 0
         self._solver = SudokuSolver(False)
-
+        self._max_errors = max_errors
         if autogenerate:
             if generator:
                 self._generator = generator
@@ -28,7 +28,7 @@ class Sudoku:
             return True
         else:
             self._error_count += 1
-            if self._error_count > self._max_errors:
+            if self._error_count >= self._max_errors:
                 raise Exception("Game over! You ran out of errors!")
             return False
 

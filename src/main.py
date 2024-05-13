@@ -2,10 +2,11 @@ from sudoku import Sudoku
 from graphics import Window
 """
 TODO 
-implement UI
+implement UI:
+    number of errors,
+    solve button w/ animated solve
 implement modular improvements to the backtracker (arc consistency, etc)
-time in = 6 hours
-starting back - 1:30pm
+time in = 10 hours
 """
 
 def control(game):
@@ -17,6 +18,7 @@ def control(game):
 
 
 def main():
+    print("Generating puzzle...")
     control(Sudoku())
     # s.auto_solve()
     # window.draw(s._board)
