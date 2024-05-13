@@ -16,9 +16,14 @@ class Sudoku:
                 self._generator = SudokuGenerator()
             self._board = self._generator._generate_game()
 
+    def add_gui(self, window):
+        self._window = window
+        
+        pass
     def auto_solve(self):
         self._solver.solve(self._board, 0, 0)
         self._board = self._solver.get_solved_board()
+
 
     def play(self, i, j, value):
         if check_play(self._board, i, j, value):
