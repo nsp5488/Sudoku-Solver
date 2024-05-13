@@ -2,9 +2,9 @@ from sudoku_generator import SudokuGenerator
 from sudoku_solver import SudokuSolver, check_play
 
 class Sudoku:
-    def __init__(self, autogenerate=True, generator=None, solver=None):
+    def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3):
         self._board = [[0] * 9 for _ in range(9)]
-        
+        self._error_count = 0
         self._generating_board = True
         self._num_solutions = 0
         self._solver = SudokuSolver(False)
@@ -16,10 +16,7 @@ class Sudoku:
                 self._generator = SudokuGenerator()
             self._board = self._generator._generate_game()
 
-    def add_gui(self, window):
-        self._window = window
-        
-        pass
+
     def auto_solve(self):
         self._solver.solve(self._board, 0, 0)
         self._board = self._solver.get_solved_board()
@@ -30,6 +27,9 @@ class Sudoku:
             self._board[i][j] = value
             return True
         else:
+            self._error_count += 1
+            if self._error_count > self._max_errors:
+                raise Exception("Game over! You ran out of errors!")
             return False
 
 
