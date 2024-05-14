@@ -12,13 +12,14 @@ resume @ 7pm
 
 def control(game, window):
     make_play = lambda args: game.play(*args)
+    solve_callback = lambda: game._solver.solve(game._board, 0, 0)
     
-    window.draw(game._board)
-    window.add_observer(make_play)
     window.set_max_errors(3)
-    window.disable_game()
-
-    game._solver.solve(game._board, 0, 0)
+    window.draw(game._board)
+    
+    window.add_observer(make_play)
+    window.set_solve_callback(solve_callback)
+    # game._solver.solve(game._board, 0, 0)
     window.wait_for_close()
 
 

@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, StringVar, Entry, Label
+from tkinter import Tk, Frame, StringVar, Entry, Label, Button
 
 class Window:
     def __init__(self, width, height, observers = []):
@@ -9,15 +9,17 @@ class Window:
         self._board.grid(row=0, rowspan=9)
         # self._board.pack()
 
-        self._bottom_frame = Frame(self._root, bg='white')
+        self._bottom_frame = Frame(self._root)
         self._bottom_frame.grid(row=10)
         self._error_label = Label(self._bottom_frame)
-        self._error_label.grid(row = 0, column=0)
+        self._error_label.grid(row = 0, column=1)
         self._num_errors = 0
         self.max_errors = 3
         self._disable_game = False
-        # self.testLabel2 = Label(self._bottom_frame, text='def')
-        # self.testLabel2.grid(row=0, column=1)
+
+        self._solve_button = Button(self._bottom_frame, text="Solve")
+        self._solve_button.grid(row=0, column=0)
+
 
         self._observers = observers
 
@@ -27,6 +29,9 @@ class Window:
         self._build_cells()
 
         self._root.protocol("WM_DELETE_WINDOW", self.close)
+
+    def set_solve_callback(self, solve_func):
+        self._solve_button.configure(command=lambda:[self.disable_game(), solve_func()])
 
     def set_max_errors(self, max_errors):
         self.max_errors = max_errors
