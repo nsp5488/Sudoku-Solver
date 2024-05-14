@@ -1,12 +1,12 @@
 import unittest
 
 from sudoku_generator import SudokuGenerator
-from sudoku_solver import check_play
+from sudoku_solver import SudokuSolver, check_play
 
 
 class TestSudokuGenerator(unittest.TestCase):
     def setUp(self) -> None:
-        self.generator = SudokuGenerator(32, 0)
+        self.generator = SudokuGenerator(number_of_filled_cells=32, random_seed=0, solver=SudokuSolver(True, False, 0, True))
         return super().setUp()
 
     def test_board_generation(self):

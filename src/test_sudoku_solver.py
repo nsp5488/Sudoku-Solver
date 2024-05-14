@@ -5,7 +5,7 @@ from sudoku_solver import SudokuSolver, check_play
 
 class TestSudokuSolver(unittest.TestCase):
     def setUp(self) -> None:
-        self.solver = SudokuSolver()
+        self.solver = SudokuSolver(use_ac3=False)
         self.board = [
             [7, 0, 1, 6, 0, 0, 5, 0, 0],
             [0, 0, 2, 0, 8, 0, 0, 7, 0],
@@ -38,3 +38,11 @@ class TestSudokuSolver(unittest.TestCase):
 
     def test_check_play_cell(self):
         self.assertFalse(check_play(self.board, 0, 1, 1))
+
+    def test_get_neighbors(self):
+        neighbors = self.solver.get_neighbors((0,0))
+        self.assertEqual((8+8+4), len(neighbors))
+        
+    def test_ac3(self):
+        self.solver._use_ac3 = True
+        self.solver.solve(self.board, 0, 0)
