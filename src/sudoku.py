@@ -2,13 +2,16 @@ from sudoku_generator import SudokuGenerator
 
 
 class Sudoku:
-    def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, board=None, solution=None):
+    def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, max_hints=3, board=None, solution=None):
         self._board = [[0] * 9 for _ in range(9)]
-        self._error_count = 0
         self._generating_board = True
         self._num_solutions = 0
         self._solver = solver
+
+        self._error_count = 0
         self._max_errors = max_errors
+        self._num_hints = 0
+        self._max_hints = max_hints
         if autogenerate:
             if generator:
                 self._generator = generator
@@ -44,6 +47,13 @@ class Sudoku:
                 raise Exception("Game over! You ran out of errors!")
             return False
 
+    def get_hint(self, i, j):
+        if self._num_hints < self._max_hints:
+            self._board[i][j] = self._solution[i][j]
+            self._num_hints += 1
+            return self._solution[i][j]
+        
+
     def get_cell(self, i, j):
         return self._board[i][j]
 
@@ -52,6 +62,8 @@ class Sudoku:
 
     def get_solution(self):
         return self._solution
+    
+
 
     def __repr__(self):
         out = ''
