@@ -4,7 +4,7 @@ import heapq
 
 class SudokuSolver:
     def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05, use_ac3=True, 
-                 use_mrv=True, use_forward_checking=False):
+                 use_mrv=True, use_forward_checking=True):
         self._generating_board = generating_board
         self._num_solutions = 0
         self._board = []
@@ -20,6 +20,8 @@ class SudokuSolver:
             for j in range(9):
                 if len(self._domains[i][j]) == 1:
                     self._board[i][j] = list(self._domains[i][j])[0]
+                    if self._visualize:
+                        self._vis_update((i, j, self._board[i][j], False))
 
     def solve(self, board, row, col):
         self._board = board
@@ -52,8 +54,20 @@ class SudokuSolver:
     def constraint_propogation(self):
         pass
 
-    def forward_check(self):
-        pass
+    def _forward_check(self, xi, value):
+        removed = []
+        for neighbor in self._get_neighbors(xi):
+            if value in self._domains[neighbor[0]][neighbor[1]]:
+                if len(self._domains[neighbor[0]][neighbor[1]]) == 1:
+                    return (False, removed)
+                else:
+                    self._domains[neighbor[0]][neighbor[1]].remove(value)
+                    removed.append(neighbor)
+        return (True, removed)
+    
+    def _undo_forward_check(self, value, removed):
+        for neighbor in removed:
+            self._domains[neighbor[0]][neighbor[1]].add(value)
 
     def _build_mrv_heap(self):
         # flatten the domain array:
@@ -138,18 +152,29 @@ class SudokuSolver:
         
         if len(self._mrv_heap) > 0:
             row, col = heapq.heappop(self._mrv_heap)[1] # index 0 contains priority, index 1 is a tuple of row, col
+            while self._board[row][col] > 0 and len(self._mrv_heap) > 0:
+                row, col = heapq.heappop(self._mrv_heap)[1]
         else:
             return False
         
         for value in self._get_domain(row, col):
+            if self._use_forward_checking:
+                result, removed = self._forward_check((row,col), value)
+                if not result:
+                    self._undo_forward_check(value, removed)
+                    continue
+
             if self._visualize:
                 self._vis_update((row, col, value, not check_play(self._board, row, col, value)))
                 time.sleep(self._visualize_timer)
+
             if check_play(self._board, row, col, value):
                 self._board[row][col] = value
                 self._n_remaining -= 1
                 if self._mrv_backtrack():
                     return True
+            if self._use_forward_checking:
+                self._undo_forward_check(value, removed)
         if self._visualize:
             self._vis_update((row, col, 0))
 
@@ -159,8 +184,6 @@ class SudokuSolver:
         return False
 
     def _get_domain(self, row, col):
-        
-
         if self._use_ac3:
             return list(self._domains[row][col])
         else:

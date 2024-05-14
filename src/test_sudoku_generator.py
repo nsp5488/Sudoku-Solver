@@ -6,7 +6,8 @@ from sudoku_solver import SudokuSolver, check_play
 
 class TestSudokuGenerator(unittest.TestCase):
     def setUp(self) -> None:
-        self.generator = SudokuGenerator(number_of_filled_cells=17, random_seed=1, solver=SudokuSolver(True, False, 0, True, True))
+        self._num_to_fill = 32
+        self.generator = SudokuGenerator(number_of_filled_cells=self._num_to_fill, random_seed=1, solver=SudokuSolver(True, False, 0, True, True, True))
         return super().setUp()
 
     def test_board_generation(self):
@@ -21,5 +22,5 @@ class TestSudokuGenerator(unittest.TestCase):
                     self.assertTrue(check_play(board, i, j, value))
                     num_filled += 1
 
-        self.assertEqual(32, num_filled)
+        self.assertEqual(self._num_to_fill, num_filled)
         
