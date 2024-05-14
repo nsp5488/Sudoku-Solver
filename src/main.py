@@ -3,10 +3,11 @@ from graphics import Window
 from sudoku_solver import SudokuSolver
 """
 TODO 
-implement UI:
-implement modular improvements to the backtracker (arc consistency, etc)
-time in = 10 hours
-resume @ 7pm
+create an options GUI that enables the user to select what solver, the complexity of the puzzle, number of errors, etc.
+add a hints option
+
+
+time in = 16 hours
 """
 
 
@@ -34,12 +35,6 @@ def main():
     game = Sudoku(solver=solver)
 
     control(game, window)
-    # s.auto_solve()
-    # window.draw(s._board)
-    # for i in range(9):
-    #     for j in range(9):
-    #         window.update_cell(i, j, 0)
-    # print(s)
 
 
 if __name__ == '__main__':
