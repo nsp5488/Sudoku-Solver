@@ -2,10 +2,6 @@ from sudoku import Sudoku
 from graphics import GameWindow, MenuWindow
 from sudoku_solver import SudokuSolver
 from sudoku_generator import SudokuGenerator
-"""
-time in = 16 hours
-resumed @ 1pm
-"""
 
 
 def control(game, window):
@@ -15,7 +11,7 @@ def control(game, window):
     window.draw(game.get_board())
 
     # This enables the "rules", adding it after drawing the initial board saves us some performance
-    window.add_observer(make_play)
+    window.set_play_callback(make_play)
 
     window.wait_for_close()
 
@@ -26,9 +22,11 @@ def main():
     use_ac3 = options['solver_type'] > 1
     use_mrv = options['solver_type'] > 2
     use_forward_check = options['solver_type'] > 3
-
+    if not options['start']:
+        return
+    
     print("Generating puzzle...")
-    solver = SudokuSolver(visualize=True, visualize_timer=.05, use_ac3=use_ac3,
+    solver = SudokuSolver(visualize=options['visualize'], visualize_timer=options['timer'], use_ac3=use_ac3,
                           use_mrv=use_mrv, use_forward_checking=use_forward_check)
     generator = SudokuGenerator(options['difficulty'])
 
