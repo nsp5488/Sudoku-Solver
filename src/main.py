@@ -11,7 +11,6 @@ resume @ 7pm
 
 def control(game, window):
     make_play = lambda args: game.play(*args)
-    solve_callback = lambda: game.auto_solve()
     view_solution_callback = lambda: window.draw(game.get_solution())
 
 
@@ -20,7 +19,7 @@ def control(game, window):
 
     window.set_win_condition(game.game_won)
     window.add_observer(make_play)
-    window.set_solve_callback(solve_callback)
+    window.set_solve_callback(game.auto_solve)
     window.set_view_solution_callback(view_solution_callback)
 
     window.wait_for_close()
