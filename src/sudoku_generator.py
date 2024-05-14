@@ -27,7 +27,7 @@ class SudokuGenerator:
     def _generate_game(self):
         # Then, we make several randomized permutations to the board to create a new solution
         self._shuffle()
-
+        solution = deepcopy(self._board)
         # Finally, we reverse-solve the puzzle until we've reached a puzzle with the specified difficulty.
         self._remove_values()
         
@@ -35,7 +35,7 @@ class SudokuGenerator:
         self._generating_board = False
 
         # Return the game board
-        return self._board
+        return self._board, solution
 
     def _shuffle(self):
         # Shuffle the values in cells randomly

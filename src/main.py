@@ -4,7 +4,6 @@ from sudoku_solver import SudokuSolver
 """
 TODO 
 implement UI:
-    solve button w/ animated solve
 implement modular improvements to the backtracker (arc consistency, etc)
 time in = 10 hours
 resume @ 7pm
@@ -16,7 +15,7 @@ def control(game, window):
     
     window.set_max_errors(3)
     window.draw(game._board)
-    
+
     window.add_observer(make_play)
     window.set_solve_callback(solve_callback)
     # game._solver.solve(game._board, 0, 0)
