@@ -40,9 +40,30 @@ class TestSudokuSolver(unittest.TestCase):
         self.assertFalse(check_play(self.board, 0, 1, 1))
 
     def test_get_neighbors(self):
-        neighbors = self.solver.get_neighbors((0,0))
+        neighbors = self.solver._get_neighbors((0,0))
         self.assertEqual((8+8+4), len(neighbors))
         
     def test_ac3(self):
         self.solver._use_ac3 = True
         self.solver.solve(self.board, 0, 0)
+        solution = self.solver.get_solved_board()
+        for i in range(9):
+            for j in range(9):
+                value = solution[i][j]  # Cache the true value
+                if value != 0:
+                    solution[i][j] = 0  # Reset the value
+                    # Assert that that value results in a valid board
+                    self.assertTrue(check_play(solution, i, j, value))
+                    
+    def test_mrv(self):
+        self.solver._use_ac3 = True
+        self.solver._use_mrv = True
+        self.solver.solve(self.board, 0, 0)
+        solution = self.solver.get_solved_board()
+        for i in range(9):
+            for j in range(9):
+                value = solution[i][j]  # Cache the true value
+                if value != 0:
+                    solution[i][j] = 0  # Reset the value
+                    # Assert that that value results in a valid board
+                    self.assertTrue(check_play(solution, i, j, value))

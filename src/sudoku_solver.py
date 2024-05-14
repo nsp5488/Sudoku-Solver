@@ -1,16 +1,19 @@
 import time
 from collections import deque
-
+import heapq
 
 class SudokuSolver:
-    def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05, use_ac3=True):
+    def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05, use_ac3=True, 
+                 use_mrv=True, use_forward_checking=False):
         self._generating_board = generating_board
         self._num_solutions = 0
         self._board = []
         self._visualize = visualize
         self._vis_update = None
         self._visualize_timer = visualize_timer
-        self._use_ac3 = use_ac3            
+        self._use_ac3 = use_ac3
+        self._use_mrv = use_mrv
+        self._use_forward_checking = use_forward_checking
 
     def solve(self, board, row, col):
         self._board = board
@@ -20,7 +23,11 @@ class SudokuSolver:
             solvable = self._ac3(arcs)
             if not solvable:
                 return False
-
+            if self._use_mrv:
+                self._mrv_heap = self._build_mrv_heap()
+                return self._mrv_backtrack()
+            
+        # Default backtracker 
         return self._fill_board(row, col)
 
     def get_solved_board(self):
@@ -34,6 +41,19 @@ class SudokuSolver:
 
     def forward_check(self):
         pass
+
+    def _build_mrv_heap(self):
+        # flatten the domain array:
+        heap = []
+        self._n_remaining = 81
+        for i in range(9):
+            for j in range(9):
+                if len(self._domains[i][j]) == 1:
+                    self._n_remaining -= 1
+                else:
+                    heapq.heappush(heap, (len(self._domains[i][j]), (i, j)))
+
+        return heap
 
     def _build_domains(self, board):
         domains = [[None]*9 for _ in range(9)]
@@ -50,11 +70,11 @@ class SudokuSolver:
         arcs = []
         for i in range(9):
             for j in range(9):
-                for neighbor in self.get_neighbors((i,j)):
+                for neighbor in self._get_neighbors((i, j)):
                     arcs.append(((i, j), neighbor))
         return arcs
 
-    def get_neighbors(self, cell):
+    def _get_neighbors(self, cell):
         i, j = cell
         cell_row = i - i % 3
         cell_col = j - j % 3
@@ -80,7 +100,7 @@ class SudokuSolver:
                 removing.add(value)
         self._domains[xi[0]][xi[1]] -= removing
         return revised
-    
+
     def _ac3(self, arcs):
         queue = deque()
         for arc in arcs:
@@ -90,20 +110,41 @@ class SudokuSolver:
             if self._revise(xi, xj):
                 if len(self._domains[xi[0]][xi[1]]) == 0:
                     return False
-                for neighbor in self.get_neighbors(xi):
+                for neighbor in self._get_neighbors(xi):
                     if neighbor == xj:
                         continue
                     queue.append((xi, neighbor))
         return True
 
-    def backtrack(self, row, col):
-        pass
+    def _mrv_backtrack(self):
+        if self._generating_board and self._num_solutions > 1:
+            return False
+        if self._n_remaining == 0:
+            self._num_solutions += 1
+            return True
+        
+        row, col = heapq.heappop(self._mrv_heap)[1] # index 0 contains priority, index 1 is a tuple of row, col
+        
+        for value in self._get_domain(row, col):
+            if self._visualize:
+                self._vis_update(row, col, value, not check_play(self._board, row, col, value))
+                time.sleep(self._visualize_timer)
+            if check_play(self._board, row, col, value):
+                self._board[row][col] = value
+                self._n_remaining -= 1
+                if self._mrv_backtrack():
+                    return True
+            if self._visualize:
+                self._vis_update((row, col, 0))
+
+            self._board[row][col] = 0
+        return False
 
     def _get_domain(self, row, col):
         if self._use_ac3:
             return list(self._domains[row][col])
         else:
-            return range(1,10)
+            return range(1, 10)
 
     def _fill_board(self, row, col):
         if self._generating_board and self._num_solutions > 1:
@@ -127,9 +168,9 @@ class SudokuSolver:
                 self._board[row][col] = value
                 if self._fill_board(row, col + 1):
                     return True
-            if self._visualize:
-                self._vis_update((row, col, 0))
-            self._board[row][col] = 0
+        if self._visualize:
+            self._vis_update((row, col, 0))
+        self._board[row][col] = 0
 
         return False
 
