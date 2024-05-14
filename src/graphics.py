@@ -270,6 +270,7 @@ class MenuWindow:
             'MRV Heuristic': '3',
             'Forward Checking': '4'
         }
+        label = Label(self._solver_frame, text="Solver Algorithm").pack(side="top")
         for (key, value) in options.items():
             Radiobutton(self._solver_frame, text=key, value=value,
                         variable=self._solver_selection).pack(side="top", ipady=5)
@@ -280,8 +281,8 @@ class MenuWindow:
             'Medium': '45',
             'Hard': '35',
             'Very Hard': '30',
-            'Extreme': '22'
         }
+        label = Label(self._difficulty_frame, text="Puzzle difficulty").pack(side="top")
         for (key, value) in options.items():
             Radiobutton(self._difficulty_frame, text=key, value=value,
                         variable=self._difficulty_selection).pack(side="top", ipady=5)

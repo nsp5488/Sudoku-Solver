@@ -36,7 +36,6 @@ The difficult settings are as follows:
 * Medium: 45 filled cells
 * Hard: 35 filled cells
 * Very Hard: 30 filled cells
-* Extreme: 22 filled cells
 
 ### Solver Types
 
