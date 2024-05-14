@@ -24,7 +24,7 @@ def main():
     use_forward_check = options['solver_type'] > 3
     if not options['start']:
         return
-    
+
     print("Generating puzzle...")
     solver = SudokuSolver(visualize=options['visualize'], visualize_timer=options['timer'], use_ac3=use_ac3,
                           use_mrv=use_mrv, use_forward_checking=use_forward_check)

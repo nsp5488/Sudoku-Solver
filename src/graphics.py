@@ -3,12 +3,11 @@ import time
 
 
 class GameWindow:
-    def __init__(self, observers=[], font_size=32):
+    def __init__(self, font_size=32):
         self._root = Tk()
         self._root.title("Sudoku")
 
         self._disable_game = False
-        self._observers = observers
         self._font_size = font_size
         self._running = False
 
@@ -26,11 +25,13 @@ class GameWindow:
         self._start_timer()
         self._root.protocol("WM_DELETE_WINDOW", self.close)
 
+    """
+    Public API functions:
+    """
+
     def set_solve_callback(self, solve_func):
         self._solve_button.configure(
             command=lambda: [self.disable_game(), self._start_timer(), solve_func(), self._handle_autosolve_complete()])
-    def _start_timer(self):
-        self._start_time = time.time()
 
     def set_view_solution_callback(self, callback):
         self._view_solution_button.config(command=callback)
@@ -51,6 +52,55 @@ class GameWindow:
     def set_play_callback(self, play_func):
         self._play_func = play_func
 
+    def disable_game(self):
+        self._disable_game = True
+
+    def set_win_condition(self, win):
+        self._is_game_won = win
+
+    def draw(self, board):
+        for i in range(9):
+            for j in range(9):
+                value = board[i][j]
+                self.update_cell(i, j, value)
+
+                if self._contents[i][j].get() != ' ':
+                    self._cells[i][j].configure(state='disabled')
+                self.redraw()
+
+    def update_cell(self, i, j, value, error=False):
+        label = self._contents[i][j]
+        if value:
+            value = f"{value}"
+        else:
+            value = ' '
+        label.set(value)
+        if error:
+            self._cells[i][j].configure(foreground='red')
+        else:
+            self._cells[i][j].configure(foreground='black')
+
+        self.redraw()
+
+    def redraw(self):
+        self._root.update_idletasks()
+        self._root.update()
+
+    def wait_for_close(self):
+        self._running = True
+        while self._running:
+            self.redraw()
+
+    def close(self):
+        self._running = False
+
+    """
+    Private helper functions:
+    """
+
+    def _start_timer(self):
+        self._start_time = time.time()
+
     def _build_cells(self):
         frames = [[None]*3 for _ in range(3)]
         for i in range(3):
@@ -70,9 +120,6 @@ class GameWindow:
                 self._cells[i][j].grid(sticky='nsew')
 
                 self._contents[i][j].trace_add("write", self._handle)
-
-    def disable_game(self):
-        self._disable_game = True
 
     def _update_hints(self, cell):
         hint = self._get_hint(cell)
@@ -129,7 +176,6 @@ class GameWindow:
                 text=f"Solver completed in {int(time.time() - self._start_time)} seconds")
         self._hint_label.destroy()
         self._view_solution_button.invoke()
-        
 
     def _handle_win(self):
         gamewon = self._is_game_won()
@@ -137,50 +183,11 @@ class GameWindow:
             self.info_label.config(
                 text=f"Congratulations! You won! time elapsed: {int(time.time() - self._start_time)} seconds")
 
-    def set_win_condition(self, win):
-        self._is_game_won = win
-
     def _gameover(self):
         for i in range(9):
             for j in range(9):
                 self._cells[i][j].config(state="disabled")
         self._hint_label.destroy()
-
-    def draw(self, board):
-        for i in range(9):
-            for j in range(9):
-                value = board[i][j]
-                self.update_cell(i, j, value)
-
-                if self._contents[i][j].get() != ' ':
-                    self._cells[i][j].configure(state='disabled')
-                self.redraw()
-
-    def update_cell(self, i, j, value, error=False):
-        label = self._contents[i][j]
-        if value:
-            value = f"{value}"
-        else:
-            value = ' '
-        label.set(value)
-        if error:
-            self._cells[i][j].configure(foreground='red')
-        else:
-            self._cells[i][j].configure(foreground='black')
-
-        self.redraw()
-
-    def redraw(self):
-        self._root.update_idletasks()
-        self._root.update()
-
-    def wait_for_close(self):
-        self._running = True
-        while self._running:
-            self.redraw()
-
-    def close(self):
-        self._running = False
 
     def _build_game_frame(self):
         self._contents = [[None]*9 for _ in range(9)]
@@ -224,9 +231,9 @@ class MenuWindow:
         self._build_errors_allowed()
         self._build_hints_allowed()
         self._build_autosolve_config()
-        
+
         self._start = False
-        
+
         self._start_button = Button(
             self._root, text="Start Game!", command=lambda: [self._set_start(), self._root.destroy()])
         self._start_button.grid(row=5, column=3)
@@ -237,7 +244,7 @@ class MenuWindow:
 
     def _set_start(self):
         self._start = True
-    
+
     def _build_configuration(self):
         num_hints = int(self._num_hints.get())
         num_errors = int(self._num_errors.get())
@@ -307,5 +314,6 @@ class MenuWindow:
         self._do_autosolve = IntVar(self._root, 1)
         autosolve_label = Label(self._root, text="Visualize Autosolver?")
         autosolve_label.grid(row=4, column=2)
-        self._do_autosolve_box = Checkbutton(self._root, variable=self._do_autosolve, onvalue=1, offvalue=0)
+        self._do_autosolve_box = Checkbutton(
+            self._root, variable=self._do_autosolve, onvalue=1, offvalue=0)
         self._do_autosolve_box.grid(row=4, column=3)
