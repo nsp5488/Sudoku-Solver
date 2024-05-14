@@ -20,6 +20,14 @@ class Sudoku:
             self._solution = solver.get_solved_board()
 
 
+    def game_won(self):
+        for i in range(9):
+            for j in range(9):
+                if self._board[i][j] != self._solution[i][j]:
+                    return False
+        return True
+
+
     def auto_solve(self):
         self._solver.solve(self._board, 0, 0)
         self._board = self._solver.get_solved_board()

@@ -16,9 +16,9 @@ def control(game, window):
 
 
     window.set_max_errors(3)
-
     window.draw(game.get_board())
 
+    window.set_win_condition(game.game_won)
     window.add_observer(make_play)
     window.set_solve_callback(solve_callback)
     window.set_view_solution_callback(view_solution_callback)

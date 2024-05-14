@@ -1,4 +1,5 @@
 from tkinter import Tk, Frame, StringVar, Entry, Label, Button
+import time
 
 class Window:
     def __init__(self, width, height, observers = []):
@@ -11,11 +12,12 @@ class Window:
 
         self._bottom_frame = Frame(self._root)
         self._bottom_frame.grid(row=10)
-        self._error_label = Label(self._bottom_frame)
-        self._error_label.grid(row = 0, column=1)
+        self.info_label = Label(self._bottom_frame)
+        self.info_label.grid(row = 0, column=1)
         self._num_errors = 0
         self.max_errors = 3
         self._disable_game = False
+    
 
         self._solve_button = Button(self._bottom_frame, text="Solve")
         self._solve_button.grid(row=0, column=0)
@@ -28,7 +30,10 @@ class Window:
         self._running = False
         self._contents = [[None]*9 for _ in range(9)]
         self._cells = [[None]*9 for _ in range(9)]
+        self._is_game_won = None
+
         self._build_cells()
+        self._start_time = time.time()
 
         self._root.protocol("WM_DELETE_WINDOW", self.close)
 
@@ -40,7 +45,7 @@ class Window:
 
     def set_max_errors(self, max_errors):
         self.max_errors = max_errors
-        self._error_label.configure(text=f"Errors: {self._num_errors}/{self.max_errors}")
+        self.info_label.configure(text=f"Errors: {self._num_errors}/{self.max_errors}")
 
     def add_observer(self, observer):
         self._observers.append(observer)
@@ -86,13 +91,20 @@ class Window:
                 if not result:
                     self._cells[i][j].configure(foreground="red")
                     self._num_errors += 1
-                    self._error_label.config(text=f"Errors: {self._num_errors}/{self.max_errors}")
+                    self.info_label.config(text=f"Errors: {self._num_errors}/{self.max_errors}")
                 else:
                     self._cells[i][j].configure(foreground="black")
+                    gamewon = self._is_game_won()
+                    if gamewon:
+                        self.info_label.config(text=f"Congratulations! You won! time elapsed: {int(time.time()- self._start_time)} seconds")
             except Exception as e:
-                self._error_label.configure(text=str(e))
+                self.info_label.configure(text=str(e))
                 self._gameover()
     
+
+    def set_win_condition(self, win):
+        self._is_game_won = win
+
     def _gameover(self):
         for i in range(9):
             for j in range(9):
