@@ -1,5 +1,6 @@
 from sudoku_generator import SudokuGenerator
 
+
 class Sudoku:
     def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, board=None, solution=None):
         self._board = [[0] * 9 for _ in range(9)]
@@ -22,7 +23,6 @@ class Sudoku:
                 solver.solve(self._board, 0, 0)
                 self._solution = solver.get_solved_board()
 
-
     def game_won(self):
         for i in range(9):
             for j in range(9):
@@ -30,11 +30,9 @@ class Sudoku:
                     return False
         return True
 
-
     def auto_solve(self):
         self._solver.solve(self._board, 0, 0)
         self._board = self._solver.get_solved_board()
-
 
     def play(self, i, j, value):
         if self._solution[i][j] == value:
@@ -45,7 +43,6 @@ class Sudoku:
             if self._error_count >= self._max_errors:
                 raise Exception("Game over! You ran out of errors!")
             return False
-
 
     def get_cell(self, i, j):
         return self._board[i][j]
@@ -64,7 +61,7 @@ class Sudoku:
                 out += '\n' + '-'*13 + '\n'
             else:
                 out += '\n'
-            
+
             for j, cell in enumerate(row):
                 if j % 3 == 0:
                     out += '|'
@@ -75,6 +72,5 @@ class Sudoku:
                     out += ' '
             out += '|'
 
-        out += '\n' + '-'*13 
-        return out       
-    
+        out += '\n' + '-'*13
+        return out
