@@ -1,11 +1,12 @@
 import time
 class SudokuSolver:
-    def __init__(self, generating_board=False, visualize=False):
+    def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05):
         self._generating_board = generating_board
         self._num_solutions = 0
         self._board = []
         self._visualize = visualize
         self._vis_update = None
+        self._visualize_timer = visualize_timer
         
     def solve(self, board, row, col):
         self._board = board
@@ -35,7 +36,7 @@ class SudokuSolver:
         for value in range(1, 10):
             if self._visualize:
                 self._vis_update((row, col, value, not check_play(self._board, row, col, value)))
-                time.sleep(.05)
+                time.sleep(self._visualize_timer)
             if check_play(self._board, row, col, value):
                 self._board[row][col] = value
                 if self._fill_board(row, col + 1):

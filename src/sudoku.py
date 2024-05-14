@@ -1,5 +1,4 @@
 from sudoku_generator import SudokuGenerator
-from sudoku_solver import SudokuSolver, check_play
 
 class Sudoku:
     def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, board=None):
@@ -40,6 +39,11 @@ class Sudoku:
     def get_cell(self, i, j):
         return self._board[i][j]
 
+    def get_board(self):
+        return self._board
+
+    def get_solution(self):
+        return self._solution
 
     def __repr__(self):
         out = ''

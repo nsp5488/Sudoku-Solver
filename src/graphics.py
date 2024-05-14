@@ -20,6 +20,8 @@ class Window:
         self._solve_button = Button(self._bottom_frame, text="Solve")
         self._solve_button.grid(row=0, column=0)
 
+        self._view_solution_button = Button(self._bottom_frame, text="View Solution")
+        self._view_solution_button.grid(row=0, column=3)
 
         self._observers = observers
 
@@ -32,6 +34,9 @@ class Window:
 
     def set_solve_callback(self, solve_func):
         self._solve_button.configure(command=lambda:[self.disable_game(), solve_func()])
+
+    def set_view_solution_callback(self, callback):
+        self._view_solution_button.config(command=callback)
 
     def set_max_errors(self, max_errors):
         self.max_errors = max_errors
@@ -94,7 +99,6 @@ class Window:
                 self._cells[i][j].config(state="disabled")
 
     def draw(self, board):
-        print("Drawing initial board...")
         for i in range(9):
             for j in range(9):
                 value = board[i][j]

@@ -1,6 +1,6 @@
 from random import randint, seed
 from copy import deepcopy
-from sudoku_solver import SudokuSolver, check_play
+from sudoku_solver import SudokuSolver
 
 class SudokuGenerator:
     def __init__(self, number_of_filled_cells=32, random_seed=None, solver = SudokuSolver(True), template=None):
