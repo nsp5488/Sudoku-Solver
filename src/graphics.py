@@ -218,14 +218,18 @@ class MenuWindow:
         self._root.title("Sudoku Solver")
         self._root.grid()
 
-        self._solver_frame = Frame(self._root)
-        self._solver_frame.grid(row=0, column=3)
+        self._solver_frame = Frame(self._root, relief='solid', borderwidth=1)
+        self._solver_frame.grid(row=0, column=1, padx=5)
         self._solver_selection = StringVar(self._root, "1")
         self._build_solver_selector()
 
-        self._difficulty_frame = Frame(self._root)
-        self._difficulty_frame.grid(row=0, column=2)
+        self._difficulty_frame = Frame(self._root, relief='solid', borderwidth=1)
+        self._difficulty_frame.grid(row=0, column=0)
         self._difficulty_selection = StringVar(self._root, "45")
+
+        self._bottom_frame = Frame(self._root, relief='solid', borderwidth=1)
+        self._bottom_frame.grid(row=1, column=0, columnspan=2, padx=2, pady=5)
+        
         self._build_difficulty_selector()
 
         self._build_errors_allowed()
@@ -235,8 +239,8 @@ class MenuWindow:
         self._start = False
 
         self._start_button = Button(
-            self._root, text="Start Game!", command=lambda: [self._set_start(), self._root.destroy()])
-        self._start_button.grid(row=5, column=3)
+            self._bottom_frame, text="Start Game!", command=lambda: [self._set_start(), self._root.destroy()])
+        self._start_button.grid(row=5, column=1)
 
     def start(self):
         self._root.mainloop()
@@ -288,33 +292,33 @@ class MenuWindow:
                         variable=self._difficulty_selection).pack(side="top", ipady=5)
 
     def _build_errors_allowed(self):
-        self._num_errors = StringVar(self._root, '3')
-        error_label = Label(self._root, text="Errors allowed: ")
-        error_label.grid(row=1, column=2)
+        self._num_errors = StringVar(self._bottom_frame, '3')
+        error_label = Label(self._bottom_frame, text="Errors allowed: ")
+        error_label.grid(row=1, column=0)
         self._num_errors_entry = Entry(
-            self._root, textvariable=self._num_errors, width=5)
-        self._num_errors_entry.grid(row=1, column=3)
+            self._bottom_frame, textvariable=self._num_errors, width=5)
+        self._num_errors_entry.grid(row=1, column=1)
 
     def _build_hints_allowed(self):
-        self._num_hints = StringVar(self._root, '3')
-        hint_label = Label(self._root, text="Hints allowed: ")
-        hint_label.grid(row=2, column=2)
+        self._num_hints = StringVar(self._bottom_frame, '3')
+        hint_label = Label(self._bottom_frame, text="Hints allowed: ")
+        hint_label.grid(row=2, column=0)
         self._num_hints_entry = Entry(
-            self._root, textvariable=self._num_hints, width=5)
-        self._num_hints_entry.grid(row=2, column=3)
+            self._bottom_frame, textvariable=self._num_hints, width=5)
+        self._num_hints_entry.grid(row=2, column=1)
 
     def _build_autosolve_config(self):
-        self._timer = StringVar(self._root, '0.05')
-        timer_label = Label(self._root, text="Autosolve delay: ")
-        timer_label.grid(row=3, column=2)
+        self._timer = StringVar(self._bottom_frame, '0.05')
+        timer_label = Label(self._bottom_frame, text="Autosolve delay: ")
+        timer_label.grid(row=3, column=0)
         self._timer_entry = Entry(
-            self._root, textvariable=self._timer, width=5
+            self._bottom_frame, textvariable=self._timer, width=5
         )
-        self._timer_entry.grid(row=3, column=3)
+        self._timer_entry.grid(row=3, column=1)
 
-        self._do_autosolve = IntVar(self._root, 1)
-        autosolve_label = Label(self._root, text="Visualize Autosolver?")
-        autosolve_label.grid(row=4, column=2)
+        self._do_autosolve = IntVar(self._bottom_frame, 1)
+        autosolve_label = Label(self._bottom_frame, text="Visualize Autosolver?")
+        autosolve_label.grid(row=4, column=0)
         self._do_autosolve_box = Checkbutton(
-            self._root, variable=self._do_autosolve, onvalue=1, offvalue=0)
-        self._do_autosolve_box.grid(row=4, column=3)
+            self._bottom_frame, variable=self._do_autosolve, onvalue=1, offvalue=0)
+        self._do_autosolve_box.grid(row=4, column=1)
