@@ -4,7 +4,7 @@ from sudoku import Sudoku
 
 class TestSudoku(unittest.TestCase):
     def setUp(self) -> None:
-        self.puzzle = Sudoku(False, None, None, 3, [
+        self.puzzle = Sudoku(False, None, None, 3, 3, [
                              [0, 2], [0, 0]], [[1, 2], [3, 4]])
 
         return super().setUp()

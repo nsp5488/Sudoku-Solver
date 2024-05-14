@@ -2,8 +2,9 @@ import time
 from collections import deque
 import heapq
 
+
 class SudokuSolver:
-    def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05, use_ac3=True, 
+    def __init__(self, generating_board=False, visualize=False, visualize_timer=0.05, use_ac3=True,
                  use_mrv=True, use_forward_checking=True):
         self._generating_board = generating_board
         self._num_solutions = 0
@@ -14,14 +15,6 @@ class SudokuSolver:
         self._use_ac3 = use_ac3
         self._use_mrv = use_mrv
         self._use_forward_checking = use_forward_checking
-
-    def _lock_board_by_domains(self):
-        for i in range(9):
-            for j in range(9):
-                if len(self._domains[i][j]) == 1:
-                    self._board[i][j] = list(self._domains[i][j])[0]
-                    if self._visualize:
-                        self._vis_update((i, j, self._board[i][j], False))
 
     def solve(self, board, row, col):
         self._board = board
@@ -34,15 +27,14 @@ class SudokuSolver:
             if not self._generating_board:
                 self._lock_board_by_domains()
 
-            
             if not solvable:
                 return False
 
             if self._use_mrv:
                 self._mrv_heap = self._build_mrv_heap()
                 return self._mrv_backtrack()
-            
-        # Default backtracker 
+
+        # Default backtracker
         return self._fill_board(row, col)
 
     def get_solved_board(self):
@@ -51,8 +43,13 @@ class SudokuSolver:
     def set_visualize_display(self, vis_update):
         self._vis_update = vis_update
 
-    def constraint_propogation(self):
-        pass
+    def _lock_board_by_domains(self):
+        for i in range(9):
+            for j in range(9):
+                if len(self._domains[i][j]) == 1:
+                    self._board[i][j] = list(self._domains[i][j])[0]
+                    if self._visualize:
+                        self._vis_update((i, j, self._board[i][j], False))
 
     def _forward_check(self, xi, value):
         removed = []
@@ -64,7 +61,7 @@ class SudokuSolver:
                     self._domains[neighbor[0]][neighbor[1]].remove(value)
                     removed.append(neighbor)
         return (True, removed)
-    
+
     def _undo_forward_check(self, value, removed):
         for neighbor in removed:
             self._domains[neighbor[0]][neighbor[1]].add(value)
@@ -149,23 +146,25 @@ class SudokuSolver:
         if self._n_remaining == 0:
             self._num_solutions += 1
             return not self._generating_board
-        
+
         if len(self._mrv_heap) > 0:
-            row, col = heapq.heappop(self._mrv_heap)[1] # index 0 contains priority, index 1 is a tuple of row, col
+            # index 0 contains priority, index 1 is a tuple of row, col
+            row, col = heapq.heappop(self._mrv_heap)[1]
             while self._board[row][col] > 0 and len(self._mrv_heap) > 0:
                 row, col = heapq.heappop(self._mrv_heap)[1]
         else:
             return False
-        
+
         for value in self._get_domain(row, col):
             if self._use_forward_checking:
-                result, removed = self._forward_check((row,col), value)
+                result, removed = self._forward_check((row, col), value)
                 if not result:
                     self._undo_forward_check(value, removed)
                     continue
 
             if self._visualize:
-                self._vis_update((row, col, value, not check_play(self._board, row, col, value)))
+                self._vis_update(
+                    (row, col, value, not check_play(self._board, row, col, value)))
                 time.sleep(self._visualize_timer)
 
             if check_play(self._board, row, col, value):
@@ -179,7 +178,8 @@ class SudokuSolver:
             self._vis_update((row, col, 0))
 
         self._board[row][col] = 0
-        heapq.heappush(self._mrv_heap, (len(self._domains[row][col]), (row, col)))
+        heapq.heappush(self._mrv_heap, (len(
+            self._domains[row][col]), (row, col)))
         self._n_remaining += 1
         return False
 

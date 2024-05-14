@@ -24,7 +24,7 @@ class SudokuGenerator:
         if random_seed:
             seed(random_seed)
 
-    def _generate_game(self):
+    def generate_game(self):
         # Then, we make several randomized permutations to the board to create a new solution
         self._shuffle()
         solution = deepcopy(self._board)

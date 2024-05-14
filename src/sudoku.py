@@ -17,7 +17,7 @@ class Sudoku:
                 self._generator = generator
             else:
                 self._generator = SudokuGenerator()
-            self._board, self._solution = self._generator._generate_game()
+            self._board, self._solution = self._generator.generate_game()
         else:
             self._board = board
             if solution:
@@ -52,7 +52,6 @@ class Sudoku:
             self._board[i][j] = self._solution[i][j]
             self._num_hints += 1
             return self._solution[i][j]
-        
 
     def get_cell(self, i, j):
         return self._board[i][j]
@@ -62,8 +61,6 @@ class Sudoku:
 
     def get_solution(self):
         return self._solution
-    
-
 
     def __repr__(self):
         out = ''

@@ -3,10 +3,6 @@ from graphics import GameWindow, MenuWindow
 from sudoku_solver import SudokuSolver
 from sudoku_generator import SudokuGenerator
 """
-TODO 
-create an options GUI that enables the user to select what solver, the complexity of the puzzle, number of errors, etc.
-add a hints option
-stretch goal: add the ability to load a puzzle from an image
 time in = 16 hours
 resumed @ 1pm
 """
@@ -32,14 +28,16 @@ def main():
     use_forward_check = options['solver_type'] > 3
 
     print("Generating puzzle...")
-    solver = SudokuSolver(visualize=True, visualize_timer=.05, use_ac3=use_ac3, use_mrv=use_mrv, use_forward_checking=use_forward_check)
+    solver = SudokuSolver(visualize=True, visualize_timer=.05, use_ac3=use_ac3,
+                          use_mrv=use_mrv, use_forward_checking=use_forward_check)
     generator = SudokuGenerator(options['difficulty'])
-    game = Sudoku(solver=solver, max_errors=options['num_errors'], max_hints=options['num_hints'], generator=generator)
+
+    game = Sudoku(solver=solver, max_errors=options['num_errors'],
+                  max_hints=options['num_hints'], generator=generator)
 
     print("Building game window...")
     window = GameWindow()
     def view_solution_callback(): return window.draw(game.get_solution())
-    
 
     window.set_max_errors(options['num_errors'])
     window.set_max_hints(options['num_hints'])

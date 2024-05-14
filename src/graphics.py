@@ -56,8 +56,9 @@ class GameWindow:
 
     def set_max_hints(self, max_hints):
         self._max_hints = max_hints
-        self._hint_label.config(text=f"Hints {self._num_hints}/{self._max_hints}")
-    
+        self._hint_label.config(
+            text=f"Hints {self._num_hints}/{self._max_hints}")
+
     def set_hint_callback(self, hint_func):
         self._get_hint = hint_func
 
@@ -95,11 +96,12 @@ class GameWindow:
         i, j = int(indices[0]), int(indices[1])
         contents_str = self._contents[i][j].get().strip()
         if '?' in contents_str:
-            hint = self._get_hint((i,j))
+            hint = self._get_hint((i, j))
             if hint is not None:
                 self.update_cell(i, j, hint, False)
                 self._num_hints += 1
-                self._hint_label.config(text=f"Hints {self._num_hints}/{self._max_hints}")
+                self._hint_label.config(
+                    text=f"Hints {self._num_hints}/{self._max_hints}")
                 return
         if contents_str.isnumeric():
             contents = int(contents_str)
@@ -223,11 +225,11 @@ class MenuWindow:
 
     def _build_difficulty_selector(self):
         options = {
-            'Easy': '45',
-            'Medium': '40',
+            'Easy': '55',
+            'Medium': '45',
             'Hard': '35',
             'Very Hard': '30',
-            'Extreme': '17'
+            'Extreme': '22'
         }
         for (key, value) in options.items():
             Radiobutton(self._difficulty_frame, text=key, value=value,

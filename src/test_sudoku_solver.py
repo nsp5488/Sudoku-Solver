@@ -5,7 +5,7 @@ from sudoku_solver import SudokuSolver, check_play
 
 class TestSudokuSolver(unittest.TestCase):
     def setUp(self) -> None:
-        self.solver = SudokuSolver(use_ac3=False, use_forward_checking=False)
+        self.solver = SudokuSolver()
         self.board = [
             [7, 0, 1, 6, 0, 0, 5, 0, 0],
             [0, 0, 2, 0, 8, 0, 0, 7, 0],
