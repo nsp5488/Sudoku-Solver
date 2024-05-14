@@ -15,14 +15,27 @@ class SudokuSolver:
         self._use_mrv = use_mrv
         self._use_forward_checking = use_forward_checking
 
+    def _lock_board_by_domains(self):
+        for i in range(9):
+            for j in range(9):
+                if len(self._domains[i][j]) == 1:
+                    self._board[i][j] = list(self._domains[i][j])[0]
+
     def solve(self, board, row, col):
         self._board = board
         if self._use_ac3:
             self._domains = self._build_domains(board)
             arcs = self._build_arcs()
             solvable = self._ac3(arcs)
+
+            # We can only take advantage of this optimization if we're not generating a board.
+            if not self._generating_board:
+                self._lock_board_by_domains()
+
+            
             if not solvable:
                 return False
+
             if self._use_mrv:
                 self._mrv_heap = self._build_mrv_heap()
                 return self._mrv_backtrack()
@@ -121,26 +134,33 @@ class SudokuSolver:
             return False
         if self._n_remaining == 0:
             self._num_solutions += 1
-            return True
+            return not self._generating_board
         
-        row, col = heapq.heappop(self._mrv_heap)[1] # index 0 contains priority, index 1 is a tuple of row, col
+        if len(self._mrv_heap) > 0:
+            row, col = heapq.heappop(self._mrv_heap)[1] # index 0 contains priority, index 1 is a tuple of row, col
+        else:
+            return False
         
         for value in self._get_domain(row, col):
             if self._visualize:
-                self._vis_update(row, col, value, not check_play(self._board, row, col, value))
+                self._vis_update((row, col, value, not check_play(self._board, row, col, value)))
                 time.sleep(self._visualize_timer)
             if check_play(self._board, row, col, value):
                 self._board[row][col] = value
                 self._n_remaining -= 1
                 if self._mrv_backtrack():
                     return True
-            if self._visualize:
-                self._vis_update((row, col, 0))
+        if self._visualize:
+            self._vis_update((row, col, 0))
 
-            self._board[row][col] = 0
+        self._board[row][col] = 0
+        heapq.heappush(self._mrv_heap, (len(self._domains[row][col]), (row, col)))
+        self._n_remaining += 1
         return False
 
     def _get_domain(self, row, col):
+        
+
         if self._use_ac3:
             return list(self._domains[row][col])
         else:
@@ -155,10 +175,8 @@ class SudokuSolver:
         if col == 9:
             col = 0
             row = row + 1
-
         if self._board[row][col] > 0:
             return self._fill_board(row, col + 1)
-
         for value in self._get_domain(row, col):
             if self._visualize:
                 self._vis_update(

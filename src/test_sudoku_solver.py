@@ -5,7 +5,7 @@ from sudoku_solver import SudokuSolver, check_play
 
 class TestSudokuSolver(unittest.TestCase):
     def setUp(self) -> None:
-        self.solver = SudokuSolver(use_ac3=False)
+        self.solver = SudokuSolver(use_ac3=False, use_forward_checking=False)
         self.board = [
             [7, 0, 1, 6, 0, 0, 5, 0, 0],
             [0, 0, 2, 0, 8, 0, 0, 7, 0],
@@ -22,6 +22,7 @@ class TestSudokuSolver(unittest.TestCase):
 
         self.assertTrue(self.solver.solve(self.board, 0, 0))
         solution = self.solver.get_solved_board()
+        num_filled = 0
         for i in range(9):
             for j in range(9):
                 value = solution[i][j]  # Cache the true value
@@ -29,7 +30,8 @@ class TestSudokuSolver(unittest.TestCase):
                     solution[i][j] = 0  # Reset the value
                     # Assert that that value results in a valid board
                     self.assertTrue(check_play(solution, i, j, value))
-
+                    num_filled += 1
+        self.assertEqual(81, num_filled)
     def test_check_play_row(self):
         self.assertFalse(check_play(self.board, 0, 1, 5))
 
@@ -45,8 +47,11 @@ class TestSudokuSolver(unittest.TestCase):
         
     def test_ac3(self):
         self.solver._use_ac3 = True
-        self.solver.solve(self.board, 0, 0)
+        self.solver._use_mrv = False
+        self.assertTrue(self.solver.solve(self.board, 0, 0))
         solution = self.solver.get_solved_board()
+        num_filled = 0
+
         for i in range(9):
             for j in range(9):
                 value = solution[i][j]  # Cache the true value
@@ -54,12 +59,16 @@ class TestSudokuSolver(unittest.TestCase):
                     solution[i][j] = 0  # Reset the value
                     # Assert that that value results in a valid board
                     self.assertTrue(check_play(solution, i, j, value))
-                    
+                    num_filled += 1
+
+        self.assertEqual(81, num_filled)
+
     def test_mrv(self):
         self.solver._use_ac3 = True
         self.solver._use_mrv = True
-        self.solver.solve(self.board, 0, 0)
+        self.assertTrue(self.solver.solve(self.board, 0, 0))
         solution = self.solver.get_solved_board()
+        num_filled = 0
         for i in range(9):
             for j in range(9):
                 value = solution[i][j]  # Cache the true value
@@ -67,3 +76,5 @@ class TestSudokuSolver(unittest.TestCase):
                     solution[i][j] = 0  # Reset the value
                     # Assert that that value results in a valid board
                     self.assertTrue(check_play(solution, i, j, value))
+                    num_filled += 1
+        self.assertEqual(81, num_filled)
