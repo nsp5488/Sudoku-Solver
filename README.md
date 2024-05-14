@@ -19,7 +19,9 @@ or running the main script
 main.sh
 ```
 
-You should then be faced with ![Image of Sudoku Solver Main Menu](readme_resources/main_screen.png)
+You should then be faced with the main menu:
+
+![Image of Sudoku Solver Main Menu](readme_resources/main_screen.png)
 
 ### Errors, Hints, and Autosolver visualization
 
@@ -106,8 +108,15 @@ MRV, or Minimum Remaining Values-backtracking, builds upon AC-3 and regular back
 
 Regular backtracking will usually fill the board from top-left to bottom right, going across the columns. All MRV backtracking does, is proocess cells in order of the number of possible values remaining. This effectively allows us to fill in many of the values in the board instantly, after AC-3 completes, and in general it loads the "difficult" parts of the problem at the end of the search, where less "unwinding" is required to make modifications.
 
+For example, the order in which MRV will fill in the board below is, the top cell will get 7, then the right, center area will also get 7:
+![Sudoku Board](./readme_resources/example_game.png)
+
 The final optimization is to update the domains of variables *while we're still searching* which is precisely what forward checking does!
 
 ### Forward Checking
 
 [Forward Checking](https://en.wikipedia.org/wiki/Look-ahead_(backtracking)) is a way of constraining *future* values based on a decision we're making about the *current* value while backtracking. This enables us to figure out if a value is invalid extremely quickly, since we can look-ahead into what making this decision will do to the rest of the board. As an aside, forward checking is basically how humans actually do sudoku puzzles! We consider what the effects of filling in a cell are on the cells that are "adjacent" to that cell.
+
+An example of forward checking, using the same gameboard from earlier, is after filling in the two 7s, the domain of the bottom-right most cell will have been set to only include 7, so we will fill that value in next. We know that these values have to be right if the puzzle has a solution, so we can make those decisions early.
+
+![Sudoku Board](./readme_resources/example_game.png)
