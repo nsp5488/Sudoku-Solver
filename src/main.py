@@ -28,7 +28,7 @@ def control(game, window):
 def main():
     print("Generating puzzle...")
     window = Window(600, 600)
-    solver = SudokuSolver(visualize=True, visualize_timer=.5)
+    solver = SudokuSolver(visualize=True, visualize_timer=.005)
     solver.set_visualize_display(vis_update = lambda args: window.update_cell(*args))
     game = Sudoku(solver=solver)
     

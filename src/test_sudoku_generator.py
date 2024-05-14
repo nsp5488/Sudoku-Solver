@@ -10,7 +10,7 @@ class TestSudokuGenerator(unittest.TestCase):
     
 
     def test_board_generation(self):
-        board = self.generator._generate_game()
+        board, solution = self.generator._generate_game()
 
         for i in range(9):
             for j in range(9):

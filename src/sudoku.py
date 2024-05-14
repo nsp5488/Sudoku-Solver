@@ -1,7 +1,7 @@
 from sudoku_generator import SudokuGenerator
 
 class Sudoku:
-    def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, board=None):
+    def __init__(self, autogenerate=True, generator=None, solver=None, max_errors=3, board=None, solution=None):
         self._board = [[0] * 9 for _ in range(9)]
         self._error_count = 0
         self._generating_board = True
@@ -16,8 +16,11 @@ class Sudoku:
             self._board, self._solution = self._generator._generate_game()
         else:
             self._board = board
-            solver.solve(self._board, 0, 0)
-            self._solution = solver.get_solved_board()
+            if solution:
+                self._solution = solution
+            else:
+                solver.solve(self._board, 0, 0)
+                self._solution = solver.get_solved_board()
 
 
     def game_won(self):

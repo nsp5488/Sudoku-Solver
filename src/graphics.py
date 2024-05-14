@@ -50,7 +50,6 @@ class Window:
     def add_observer(self, observer):
         self._observers.append(observer)
 
-
     def _build_cells(self):
         frames = [[None]*3 for _ in range(3)]
         for i in range(3):
@@ -76,6 +75,7 @@ class Window:
     def _handle(self, name, handle, op):
         if self._disable_game:
             return
+        
         indices = name.split(',')
         i, j = int(indices[0]), int(indices[1])
         contents_str = self._contents[i][j].get().strip()
@@ -84,8 +84,8 @@ class Window:
         else:
             self._cells[i][j].configure(foreground="red")
             return
+        args = (i, j, contents)
         for observer in self._observers:
-            args = (i, j, contents)
             try:
                 result = observer(args)
                 if not result:
