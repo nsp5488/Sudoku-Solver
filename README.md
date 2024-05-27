@@ -119,3 +119,27 @@ The final optimization is to update the domains of variables *while we're still 
 An example of forward checking, using the same gameboard from earlier, is after filling in the two 7s, the domain of the bottom-right most cell will have been set to only include 7, so we will fill that value in next. We know that these values have to be right if the puzzle has a solution, so we can make those decisions early.
 
 ![Sudoku Board](./readme_resources/example_game.png)
+
+
+## Contributing 
+
+If there are any features that you would like to see added, feel free to add an issue here, or create a pull request implementing that feature!
+
+### Clone the repo
+
+```bash
+git clone https://github.com/nsp5488/Sudoku-Solver/
+cd Sudoku-Solver
+```
+
+### Run the code
+
+```bash
+./main.sh
+```
+
+### Run the tests
+
+```bash
+./test.sh
+``` 
